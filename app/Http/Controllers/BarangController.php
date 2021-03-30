@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Prophecy\Doubler\ClassPatch\KeywordPatch;
 
 class BarangController extends Controller
 {
@@ -17,23 +18,22 @@ class BarangController extends Controller
     {
         //
         // fungsi eloquent menampilkan data menggunakan pagination
-        /*$barangs = Barang::all(); 
-        $post = Barang::orderBy('Id_Barang', 'desc')->paginate(6);
-        return view('barangs.index', compact('barangs'));
-        with('i', (request()->input('page', 1) - 1) * 5);*/
-
-        $barangs1 = DB::table('barangs')->simplePaginate(5);	
+        $barangs1 = DB::table('barangs')->simplePaginate(5);
         $barangs = Barang::where([
             ['Kode_Barang','!=',Null],
+            ['Nama_Barang','!=',Null],
+            ['Kategori_barang','!=',Null],
             [function($query)use($request){
                 if (($term = $request->term)) {
                     $query->orWhere('Kode_Barang','LIKE','%'.$term.'%')->get();
+                    $query->orWhere('Nama_Barang','LIKE','%'.$term.'%')->get();
+                    $query->orWhere('Kategori_barang','LIKE','%'.$term.'%')->get();
                 }
             }]
         ])
-        ->orderBy('Id_Barang','desc')
-        ->simplePaginate(3);
-        
+        ->orderBy('Kode_Barang','desc')
+        ->simplePaginate(5);
+
         return view('barangs.index' , compact('barangs'))
         ->with('i',(request()->input('page',1)-1)*5);
     }
@@ -73,7 +73,7 @@ class BarangController extends Controller
         // Jika data berhasil ditambahkan, akan kembali ke halaman utama
         return redirect()->route('barangs.index')
             ->with('success', 'Barang Berhasil Ditambahkan');
-            
+
     }
 
     /**
@@ -143,4 +143,5 @@ class BarangController extends Controller
         return redirect()->route('barangs.index')
             -> with('success', 'Barang Berhasil Dihapus');
     }
+
 }

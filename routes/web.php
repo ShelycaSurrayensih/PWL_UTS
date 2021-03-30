@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
+use App\Http\Controllers\BarangController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
-});
+});*/
+Route::resource('barangs', BarangController::class);
+Route::post('cari',[BarangController::class,'cari']);
